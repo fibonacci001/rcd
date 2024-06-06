@@ -448,6 +448,12 @@ color: black;
     .inputholder {
         width: 280px;
     }
+    .maintab {
+      margin-top: 3rem;
+    }
+    .disbox {
+      margin-top: 6rem;
+    }
   }
 
   

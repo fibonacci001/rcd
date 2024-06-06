@@ -11,6 +11,7 @@ import Col from 'react-bootstrap/Col';
 import { Link } from "react-router-dom";
 import Popcoin from "./Popularcoin";
 import Popmodal from "./Popmodal";
+import './styles.css';
 import CrowdfundingStatus from "./coinamount";
 
 const Home = () => {
@@ -22,7 +23,7 @@ const Home = () => {
 
 
   return(
-    <main style={{ backgroundColor: "black" }}>
+    <main className="maintab" style={{ backgroundColor: "black" }}>
       {/* <Nav />   */}
       <div className="first-section">
         <div className="text-div">

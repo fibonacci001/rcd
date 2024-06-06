@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 
 
 const Productlist = ({products}) => {
-  console.log(products)
+  // console.log(products)
     const [activesrc, setactivesrc] = useState(null);
     const [firstmodal, setfirstmodal] = useState(false);
     
@@ -16,7 +16,7 @@ const Productlist = ({products}) => {
 
 
     return ( <>
-    <Box sx={{ flexGrow: 1, 
+    <Box  sx={{ flexGrow: 1, 
 width: '100%',
 mx: 'auto'
 }}>
